@@ -1,5 +1,6 @@
 package adventofcode.tasks;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,31 +10,42 @@ public class Day3 extends ExerciseBaseClass{
     
     int[][] table;
     final int SIZE = 1000;
+    List<Square> squareList;
     
     public Day3(String fileName)
     {
         super(fileName);
+        prepareElements();
     }  
 
     @Override
     protected final void firstTask() throws Exception{
-        List<String> lineList = getLineListString();        
-        table = new int[SIZE][SIZE];
-        
-        for(String line:lineList){
-            Square square = getSquareObjectFromString(line);
-            drawSquare(square);
-        }
-        
         System.out.println(countClaims());
-        printTable();
+        // printTable();
     }
 
     @Override
-    protected final void secondTask() throws Exception{        
-        List<String> lineList = getLineListString();
+    protected final void secondTask() throws Exception{
+        for(Square square:squareList){
+            if (checkUnclaimSquare(square)){
+                System.out.println(square.number);
+            }
+        }
+    }
+    
+    private void prepareElements()
+    {        
+        List<String> lineList = getLineListString();        
+        table = new int[SIZE][SIZE];        
+        squareList = new ArrayList<>();
         
-        table = table = new int[SIZE][SIZE];
+        for(String line:lineList){
+            squareList.add(getSquareObjectFromString(line));
+        }
+        
+        for(Square square:squareList){
+            drawSquare(square);
+        }
     }
     
     // <editor-fold defaultstate="collapsed" desc="Task 1">
@@ -52,11 +64,10 @@ public class Day3 extends ExerciseBaseClass{
         return null;
     }
     
-    private int drawSquare(Square square){
-        boolean isOverlap = true;
+    private void drawSquare(Square square){
         for (int i = square.x; i < square.x + square.height; i++) {
             for (int j = square.y; j < square.y + square.width; j++) {
-                table[i][j]++;  //table[i][j]++;
+                table[i][j]++;
             }
         }
     }
@@ -88,8 +99,17 @@ public class Day3 extends ExerciseBaseClass{
     
     // <editor-fold defaultstate="collapsed" desc="Task 2">
     
-    
-    
+    private boolean checkUnclaimSquare(Square square){
+        for (int i = square.x; i < square.x + square.height; i++) {
+            for (int j = square.y; j < square.y + square.width; j++) {
+                if (table[i][j] > 1) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
     // </editor-fold>
     
 }
